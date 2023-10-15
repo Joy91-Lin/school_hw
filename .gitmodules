@@ -1,0 +1,3 @@
+[submodule "hw6_WETH/lib/openzeppelin-contracts"]
+	path = hw6_WETH/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
