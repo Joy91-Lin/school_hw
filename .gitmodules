@@ -1,3 +1,6 @@
 [submodule "hw6_WETH/lib/openzeppelin-contracts"]
 	path = hw6_WETH/lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "hw7/hw7-1_erc721/lib/forge-std"]
+	path = hw7/hw7-1_erc721/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
