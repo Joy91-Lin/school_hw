@@ -16,7 +16,7 @@
 
 step 1:
 ```
-git clone https://github.com/chiaying-lin/school_hw.git
+git clone https://github.com/Joy91-Lin/school_hw.git
 ```
 step 2:
 ```
@@ -41,7 +41,7 @@ forge test --mc NONFT
 > * RANDAO
 step 1:
 ```
-git clone https://github.com/chiaying-lin/school_hw.git
+git clone https://github.com/Joy91-Lin/school_hw.git
 ```
 step 2:
 ```
@@ -69,7 +69,7 @@ forge test --mc BlindBoxNFT
 
 step 1:
 ```
-git clone https://github.com/chiaying-lin/school_hw.git
+git clone https://github.com/Joy91-Lin/school_hw.git
 ```
 step 2:
 ```
