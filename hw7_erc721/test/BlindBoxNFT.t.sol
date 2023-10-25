@@ -61,4 +61,27 @@ contract BlindBoxNFTTest is Test {
         }
         vm.stopPrank();
     }
+
+    function test_unBoxing_nft_randomMint()public{
+        vm.startPrank(user1);
+        // mint 3 nft and test if its tokenURI is same as blindBoxTokenURI
+        string memory blindBoxTokenURI = "ipfs://Qmdie8GoUDNNghRKvovXFMBzhbmdra3V3ndHTsjSS4M34c";
+        uint firstID = nft.randomMint();
+        assertEq(blindBoxTokenURI, nft.tokenURI(firstID));
+
+        nft.openBox();
+        
+        string memory cat0_tokenURI = "ipfs://QmPvVd3Vp7oqpPvpdUGPGaosYgAcampfnWpBDzBSWoaPMY/0";
+        string memory cat1_tokenURI = "ipfs://QmPvVd3Vp7oqpPvpdUGPGaosYgAcampfnWpBDzBSWoaPMY/1";
+        
+        // if tokenID is odd,tokenURI is equal to cat1_tokenURI.
+        // if tokenID is even,tokenURI is equal to cat0_tokenURI.
+        if(firstID % 2 == 1){
+            assertEq(cat1_tokenURI, nft.tokenURI(firstID));
+        } else{
+            assertEq(cat0_tokenURI, nft.tokenURI(firstID));
+        }
+
+        vm.stopPrank();
+    }
 }

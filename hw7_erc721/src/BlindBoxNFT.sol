@@ -11,6 +11,7 @@ contract BlindBoxNFT is ERC721{
     bool reveal;
     uint immutable totalSupply;
     uint counter;
+    mapping (uint => bool) mintedCheck;
 
 
     constructor () ERC721("Blind Box NFT","BBNFT"){
@@ -20,9 +21,26 @@ contract BlindBoxNFT is ERC721{
     function mint()public returns (uint tokenID) {
         require(counter < totalSupply, "All NFT have been mint.");
         tokenID = counter;
-        _safeMint(msg.sender, tokenID);
         counter++;
+        _safeMint(msg.sender, tokenID);
         return tokenID;
+    }
+
+    function randomMint()public returns(uint tokenID){
+        require(counter < totalSupply, "All NFT have been mint.");
+        tokenID = random(totalSupply);
+        while(mintedCheck[tokenID]){
+            tokenID = random(totalSupply);
+        }
+        mintedCheck[tokenID] = true;
+        counter++;
+        _safeMint(msg.sender, tokenID);
+        return tokenID;
+    }
+
+    function random(uint number) public view returns(uint) {
+    return uint(keccak256(abi.encodePacked(block.timestamp,  block.difficulty,
+        msg.sender))) % number;
     }
 
     function openBox() public{
