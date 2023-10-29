@@ -28,7 +28,7 @@ after clone repository
 ```
 cd school_hw/hw8_RugPullHw
 touch .env
-echo "MAINNET_RPC_URL = [Your own main net rpc url]" > .env
+echo "MAINNET_RPC_URL = Your_own_main_net_rpc_url" > .env
 forge test --mc FiatTokenV3Test
 ```
 
