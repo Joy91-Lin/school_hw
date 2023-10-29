@@ -1,5 +1,38 @@
 ### check step
 ---
+#### HW8
+
+#### hw8-1
+
+> My First Rug Pull\
+> 將hw8_RugPullHw/src/TradingCenter.sol升級成TradingCenterV2.sol\
+> 試圖在 test 中升級後 rug pull 搶走所有 user 的 usdc 和 usdt
+
+
+after clone repository
+```
+cd school_hw/hw8_RugPullHw
+forge test --mc TradingCenterTest
+```
+
+#### hw8-2
+> 請假裝你是 USDC 的 Owner，嘗試升級 usdc，並完成以下功能\
+> 製作一個白名單\
+> 只有白名單內的地址可以轉帳\
+> 白名單內的地址可以無限 mint token\
+> usdc contract address:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48\
+> usdc owner address:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48\
+> 需要在main net上進行測試，測試會使用到fork
+
+after clone repository
+```
+cd school_hw/hw8_RugPullHw
+touch .env
+echo "MAINNET_RPC_URL = [Your own main net rpc url]" > .env
+forge test --mc FiatTokenV3Test
+```
+
+---
 #### HW7
 
 #### hw7-1 nonft
@@ -14,16 +47,9 @@
 
 ![Image text](https://github.com/chiaying-lin/school_hw/blob/main/hw7_erc721/metadata/hw7-1_hint.png)
 
-step 1:
-```
-git clone https://github.com/Joy91-Lin/school_hw.git
-```
-step 2:
+after clone repository
 ```
 cd school_hw/hw7_erc721
-```
-step 3:
-```
 forge test --mc NONFT
 ```
 
@@ -39,16 +65,10 @@ forge test --mc NONFT
 > * 自己製作隨機 random，不限任何方法
 > * Chainlink VRF
 > * RANDAO
-step 1:
-```
-git clone https://github.com/Joy91-Lin/school_hw.git
-```
-step 2:
+
+after clone repository
 ```
 cd school_hw/hw7_erc721
-```
-step 3:
-```
 forge test --mc BlindBoxNFT
 ```
 ---
@@ -67,15 +87,9 @@ forge test --mc BlindBoxNFT
 > 測項 10: transferFrom 後應該要減除用完的 allowance\
 
 
-step 1:
-```
-git clone https://github.com/Joy91-Lin/school_hw.git
-```
-step 2:
+
+after clone repository
 ```
 cd school_hw/hw6_WETH
-```
-step 3:
-```
 forge test --mc WETHTest
 ```
