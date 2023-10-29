@@ -33,4 +33,8 @@ contract TradingCenter {
     token0.transferFrom(msg.sender, address(this), amount);
     token1.transfer(msg.sender, amount);
   }
+  
+  function VERSION() external view virtual returns (string memory) {
+    return "0.0.1";
+  }
 }

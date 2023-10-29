@@ -21,6 +21,8 @@ contract TradingCenterTest is Test {
   // Contracts
   TradingCenter tradingCenter;
   TradingCenter proxyTradingCenter;
+  TradingCenterV2 tradingCenterV2;
+  TradingCenterV2 proxyTradingCenterV2;
   UpgradeableProxy proxy;
   IERC20 usdt;
   IERC20 usdc;
@@ -75,6 +77,15 @@ contract TradingCenterTest is Test {
     // Let's pretend that you are proxy owner
     // Try to upgrade the proxy to TradingCenterV2
     // And check if all state are correct (initialized, usdt address, usdc address)
+
+    assertEq("0.0.1", proxyTradingCenter.VERSION());
+
+    tradingCenterV2 = new TradingCenterV2();
+    vm.prank(owner);
+    proxy.upgradeTo(address(tradingCenterV2));
+  
+    assertEq("0.0.2", proxyTradingCenter.VERSION());
+
     assertEq(proxyTradingCenter.initialized(), true);
     assertEq(address(proxyTradingCenter.usdc()), address(usdc));
     assertEq(address(proxyTradingCenter.usdt()), address(usdt));
@@ -87,10 +98,22 @@ contract TradingCenterTest is Test {
     // Try to upgrade the proxy to TradingCenterV2
     // And empty users' usdc and usdt
 
+    tradingCenterV2 = new TradingCenterV2();
+    vm.startPrank(owner);
+    proxy.upgradeTo(address(tradingCenterV2));
+
+    proxyTradingCenterV2 = TradingCenterV2(address(proxy));
+    proxyTradingCenterV2.rugPull(user1);
+    proxyTradingCenterV2.rugPull(user2);
+    vm.stopPrank();
+
     // Assert users's balances are 0
     assertEq(usdt.balanceOf(user1), 0);
     assertEq(usdc.balanceOf(user1), 0);
     assertEq(usdt.balanceOf(user2), 0);
     assertEq(usdc.balanceOf(user2), 0);
+
+    console.log("owner usdt balance: ", usdt.balanceOf(owner));
+    console.log("owner usdc balance: ", usdc.balanceOf(owner));
   }
 }
