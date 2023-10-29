@@ -61,12 +61,4 @@ contract FiatTokenV3{
         return balances[_addr];
     }
 
-    // function transferFrom(address _from, address _to, uint _value) public onlyWhiteList() returns (bool) {
-    //     require(_to != address(0), "ERC20: transfer to the zero address");
-    //     require(_value <= balances[_from], "ERC20: insufficient balance");
-
-
-    //     return true;
-    // }
-
 }
