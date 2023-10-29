@@ -5,17 +5,6 @@ import {Proxy} from "./Proxy.sol";
 import {TradingCenter} from "./TradingCenter.sol";
 import {Ownable} from "./Ownable.sol";
 
-//  erc20 interface
-interface IERC20 {
-  function totalSupply() external view returns (uint256);
-  function balanceOf(address account) external view returns (uint256);
-  function transfer(address recipient, uint256 amount) external returns (bool);
-  function allowance(address owner, address spender) external view returns (uint256);
-  function approve(address spender, uint256 amount) external returns (bool);
-  function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-  event Transfer(address indexed from, address indexed to, uint256 value);
-  event Approval(address indexed owner, address indexed spender, uint256 value);
-}
 // TODO: Try to implement TradingCenterV2 here
 contract TradingCenterV2 is TradingCenter, Ownable{
     bool public v2Initialized;
