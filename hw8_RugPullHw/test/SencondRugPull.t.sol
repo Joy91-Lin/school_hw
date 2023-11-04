@@ -27,6 +27,37 @@ contract FiatTokenV3Test is Test{
         uint256 forkId = vm.createFork(vm.envString("MAINNET_RPC_URL"));
         vm.selectFork(forkId);
 
+    }
+
+    function test_white_list_upgradeContract_without_data_()public{
+        // upgrade to V3
+        vm.startPrank(admin);
+        fiatTokenV3 = new FiatTokenV3();
+        proxyContract.upgradeTo(address(fiatTokenV3));
+        proxyfiatTokenV3 = FiatTokenV3(address(proxyContract));
+        vm.stopPrank();
+
+        // check upgrade successfullly
+        assertEq(proxyfiatTokenV3.version(), "3");
+
+        // can not set white list until initialize
+        vm.expectRevert("Please initialize the contract first.");
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.setWhiteList(user1);
+
+        // can not use changeAdmin function to set whiteListAdmin for first time
+        vm.expectRevert("Please initialize the contract first.");
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.changeAdmin(whiteListAdmin);
+
+        // initialize
+        proxyfiatTokenV3.initializerV3(whiteListAdmin);
+
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.setWhiteList(user1);
+    }
+
+    function test_white_list_upgrade_with_initialize() public {
         // upgrade to V3
         vm.startPrank(admin);
         fiatTokenV3 = new FiatTokenV3();
@@ -35,26 +66,61 @@ contract FiatTokenV3Test is Test{
         proxyfiatTokenV3 = FiatTokenV3(address(proxyContract));
         vm.stopPrank();
 
-        // check upgrade successfullly
-        assertEq(proxyfiatTokenV3.version(), "3");
-    }
-
-    function test_white_list() public {
         // admin can only call functions which are in proxy contract
         vm.expectRevert("Cannot call fallback function from the proxy admin");
         vm.prank(admin);
         proxyfiatTokenV3.setWhiteList(user1);
 
         // set user1 in white list ->failed because user1 is not in white list admin
-        vm.prank(user1);
         vm.expectRevert("only white list admin can call this function.");
+        vm.prank(user1);
         proxyfiatTokenV3.setWhiteList(user1);
 
         vm.prank(whiteListAdmin);
         proxyfiatTokenV3.setWhiteList(user1);
+
+        // change white list admin
+        address whiteListAdmin2 = makeAddr("whiteListAdmin2");
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.changeAdmin(whiteListAdmin2);
+
+        vm.expectRevert("only white list admin can call this function.");
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.setWhiteList(user2);
+
+        vm.prank(whiteListAdmin2);
+        proxyfiatTokenV3.setWhiteList(user2);
+    }
+
+    function test_white_list_admin()public{
+        // upgrade to V3
+        vm.startPrank(admin);
+        fiatTokenV3 = new FiatTokenV3();
+        proxyContract.upgradeToAndCall(address(fiatTokenV3),
+            abi.encodeWithSelector(fiatTokenV3.initializerV3.selector, whiteListAdmin));
+        proxyfiatTokenV3 = FiatTokenV3(address(proxyContract));
+        vm.stopPrank();
+
+        // white list admin can not be address(0)
+        vm.expectRevert("Invalid address");
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.changeAdmin(address(0));
+
+        // white list admin can not be admin
+        vm.expectRevert("Invalid address");
+        vm.prank(whiteListAdmin);
+        proxyfiatTokenV3.changeAdmin(admin);
     }
 
     function test_mint()public{
+        // upgrade to V3
+        vm.startPrank(admin);
+        fiatTokenV3 = new FiatTokenV3();
+        proxyContract.upgradeToAndCall(address(fiatTokenV3),
+            abi.encodeWithSelector(fiatTokenV3.initializerV3.selector, whiteListAdmin));
+        proxyfiatTokenV3 = FiatTokenV3(address(proxyContract));
+        vm.stopPrank();
+
         // set user1 in white list
         vm.prank(whiteListAdmin);
         proxyfiatTokenV3.setWhiteList(user1);
@@ -80,6 +146,14 @@ contract FiatTokenV3Test is Test{
     }
 
     function test_transfer()public{
+        // upgrade to V3
+        vm.startPrank(admin);
+        fiatTokenV3 = new FiatTokenV3();
+        proxyContract.upgradeToAndCall(address(fiatTokenV3),
+            abi.encodeWithSelector(fiatTokenV3.initializerV3.selector, whiteListAdmin));
+        proxyfiatTokenV3 = FiatTokenV3(address(proxyContract));
+        vm.stopPrank();
+
         // set user1 in white list
         vm.prank(whiteListAdmin);
         proxyfiatTokenV3.setWhiteList(user1);

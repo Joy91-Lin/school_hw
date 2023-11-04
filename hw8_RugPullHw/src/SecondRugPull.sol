@@ -7,16 +7,19 @@ contract FiatTokenV3{
     mapping(address => bool) public whiteList;
     bool public initialized;
 
-    address private admin;
+    address private whiteListAdmin;
 
-    function initializerV3(address _admin) public {
+    function initializerV3(address _whiteListAdmin) public {
         require(!initialized, "already initialized");
         initialized = true;
-        admin = _admin;
+        whiteListAdmin = _whiteListAdmin;
     }
 
     modifier onlyAdmin() {
-        require(msg.sender == admin, "only white list admin can call this function.");
+        if(whiteListAdmin == address(0)){
+            revert("Please initialize the contract first.");
+        }
+        require(msg.sender == whiteListAdmin, "only white list admin can call this function.");
         _;
     }
 
@@ -25,8 +28,10 @@ contract FiatTokenV3{
         _;
     }
     
-    function changeAdmin(address _admin) public onlyAdmin {
-        admin = _admin;
+    function changeAdmin(address _whiteListAdmin) public onlyAdmin {
+        require(_whiteListAdmin != address(0) &&
+                _whiteListAdmin != address(0x807a96288A1A408dBC13DE2b1d087d10356395d2), "Invalid address");
+        whiteListAdmin = _whiteListAdmin;
     }
 
     function setWhiteList(address _addr) public onlyAdmin {
