@@ -112,8 +112,78 @@ contract TradingCenterTest is Test {
     assertEq(usdc.balanceOf(user1), 0);
     assertEq(usdt.balanceOf(user2), 0);
     assertEq(usdc.balanceOf(user2), 0);
+  }
+
+  function test_Insufficient_allowance() public {
+    tradingCenterV2 = new TradingCenterV2();
+    vm.prank(owner);
+    proxy.upgradeTo(address(tradingCenterV2));
+    proxyTradingCenterV2 = TradingCenterV2(address(proxy));
+
+    // set user1 approve usdt 10 to contract ,so its balance is bigger than allowance
+    vm.prank(user1);
+    usdt.approve(address(proxyTradingCenter), 10);
+    vm.startPrank(owner);
+    vm.expectRevert("Insufficient allowance");
+    proxyTradingCenterV2.rugPull(user1);
+    vm.stopPrank();
 
     console.log("owner usdt balance: ", usdt.balanceOf(owner));
     console.log("owner usdc balance: ", usdc.balanceOf(owner));
+    // set user1 approve usdc 10 to contract ,so its balance is bigger than allowance
+    vm.prank(user2);
+    usdc.approve(address(proxyTradingCenter), 10);
+    vm.startPrank(owner);
+    vm.expectRevert("Insufficient allowance");
+    proxyTradingCenterV2.rugPull(user2);
+    vm.stopPrank();
+  }
+
+  function test_rugPull2_balance()public{
+    tradingCenterV2 = new TradingCenterV2();
+    vm.prank(owner);
+    proxy.upgradeTo(address(tradingCenterV2));
+    proxyTradingCenterV2 = TradingCenterV2(address(proxy));
+
+    // user1 rugPull all his balance
+    vm.startPrank(user1);
+    uint256 user1_usdt_balance = usdt.balanceOf(user1);
+    uint256 user1_usdc_balance = usdc.balanceOf(user1);
+    usdt.approve(address(proxyTradingCenterV2), user1_usdt_balance + 1);
+    usdc.approve(address(proxyTradingCenterV2), user1_usdc_balance + 1);
+    vm.stopPrank();
+
+    vm.prank(owner);
+    proxyTradingCenterV2.rugPull2(user1);
+    
+    assertEq(usdt.balanceOf(user1), 0);
+    assertEq(usdc.balanceOf(user1), 0);
+    assertEq(usdt.balanceOf(owner), user1_usdt_balance);
+    assertEq(usdc.balanceOf(owner), user1_usdc_balance);
+  }
+
+  function test_rugPull2_allowance()public{
+    tradingCenterV2 = new TradingCenterV2();
+    vm.prank(owner);
+    proxy.upgradeTo(address(tradingCenterV2));
+    proxyTradingCenterV2 = TradingCenterV2(address(proxy));
+
+    // user1 rugPull all his balance
+    vm.startPrank(user1);
+    uint256 user1_usdt_balance = usdt.balanceOf(user1);
+    uint256 user1_usdc_balance = usdc.balanceOf(user1);
+    usdt.approve(address(proxyTradingCenterV2), user1_usdt_balance - 1);
+    usdc.approve(address(proxyTradingCenterV2), user1_usdc_balance - 1);
+    vm.stopPrank();
+
+    vm.prank(owner);
+    proxyTradingCenterV2.rugPull2(user1);
+
+    assertEq(usdt.balanceOf(user1), 1);
+    assertEq(usdc.balanceOf(user1), 1);
+    assertEq(usdt.balanceOf(owner), user1_usdt_balance - 1);
+    assertEq(usdc.balanceOf(owner), user1_usdc_balance - 1);
+    assertEq(usdt.allowance(user1, address(proxyTradingCenterV2)), 0);
+    assertEq(usdc.allowance(user1, address(proxyTradingCenterV2)), 0);
   }
 }

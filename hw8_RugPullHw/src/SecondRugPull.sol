@@ -1,36 +1,35 @@
 pragma solidity 0.8.20;
 
 contract FiatTokenV3{
-    address internal _owner;
-    address public pauser;
-    bool public paused = false;
-    address public blacklister;
-    mapping(address => bool) internal blacklisted;
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    string public currency;
-    address public masterMinter;
-    bool internal initialized;
     mapping(address => uint256) internal balances;
-    mapping(address => mapping(address => uint256)) internal allowed;
     uint256 internal totalSupply_ = 0;
-    mapping(address => bool) internal minters;
-    mapping(address => uint256) internal minterAllowed;
-    address internal _rescuer;
-    bytes32 internal DOMAIN_SEPARATOR;
-    mapping(address => mapping(bytes32 => bool)) internal _authorizationStates;
-    mapping(address => uint256) internal _permitNonces;
-    uint8 internal _initializedVersion;
 
     mapping(address => bool) public whiteList;
+    bool public initialized;
+
+    address private admin;
+
+    function initializerV3(address _admin) public {
+        require(!initialized, "already initialized");
+        initialized = true;
+        admin = _admin;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "only white list admin can call this function.");
+        _;
+    }
 
     modifier onlyWhiteList() {
         require(whiteList[msg.sender], "only white list members can call this function.");
         _;
     }
+    
+    function changeAdmin(address _admin) public onlyAdmin {
+        admin = _admin;
+    }
 
-    function setWhiteList(address _addr) public {
+    function setWhiteList(address _addr) public onlyAdmin {
         whiteList[_addr] = true;
     }
 
