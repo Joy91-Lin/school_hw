@@ -38,6 +38,10 @@ contract FiatTokenV3{
         whiteList[_addr] = true;
     }
 
+    function removeWhiteListMember(address _addr) public onlyAdmin {
+        whiteList[_addr] = false;
+    }
+
     function mint(address _to, uint amount)public onlyWhiteList{
         require(address(0) != _to, "ERC20: mint to the zero address");
         totalSupply_ += amount;
