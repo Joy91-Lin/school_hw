@@ -1,5 +1,11 @@
 ### check step
 ---
+#### HW9
+
+比較 **ERC721a** 和 **ERC721Enumerable** Gas fee消耗情況\
+使用forge test --mt [test_function_name] --gas-report去查看Gas用量
+
+---
 #### HW8
 
 #### hw8-1
