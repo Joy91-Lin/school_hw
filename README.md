@@ -1,5 +1,15 @@
 ### check step
 ---
+#### HW10
+完成Simple Swap 並通過所有的Test
+
+after clone repository
+```
+cd school_hw/hw10_SimpleSwap
+npm install
+npm run test:foundry
+```
+---
 #### HW9
 
 比較 **ERC721a** 和 **ERC721Enumerable** Gas fee消耗情況\
