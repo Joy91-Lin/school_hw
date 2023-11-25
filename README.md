@@ -1,5 +1,15 @@
 ### check step
 ---
+#### HW11
+根據hw11中的README完成Practice 2的contracts/Arbitrage.sol練習
+
+after clone repository
+```
+cd school_hw/hw11_FlashSwapPractice
+npm install
+npm run test
+```
+---
 #### HW10
 完成Simple Swap 並通過所有的Test
 
