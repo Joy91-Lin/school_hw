@@ -65,4 +65,15 @@ contract ArbitragePracticeTest is FlashSwapSetUp {
         // we can earn 98.184746 with 5 ETH flash swap
         assertEq(usdc.balanceOf(address(arbitrage)), 98184746);
     }
+
+    function test_arbitrage_with_flash_swap_method2() public {
+        assertEq(weth.balanceOf(address(arbitrage)), 0);
+        uint256 borrowUSDC = 500 * 10 ** usdc.decimals();
+
+        // token0 is WETH, token1 is USDC
+        arbitrage.arbitrage_method2(address(wethUsdcPool), address(wethUsdcSushiPool), borrowUSDC);
+
+        // we can earn 0.98160385954411579 WETH with 500 USDC flash swap
+        assertGt(weth.balanceOf(address(arbitrage)), 0);
+    }
 }
