@@ -35,7 +35,6 @@ contract MyScript is Script {
         cERC20_impl = new CErc20Delegate();
         oracle = new SimplePriceOracle();
 
-        comptroller._setPriceOracle(oracle);
         CErc20Delegator delegator = new CErc20Delegator(
                 address(underlying_token),
                 comptroller,
@@ -49,8 +48,11 @@ contract MyScript is Script {
                 new bytes(0)
          );
 
-        new Unitroller();
-
+        Unitroller unitroller = new Unitroller();
+        unitroller._setPendingImplementation(address(comptroller));
+        comptroller._become(unitroller);
+        comptroller._setPriceOracle(oracle);
+        unitroller._acceptImplementation();
         vm.stopBroadcast();
     }
 }
