@@ -15,11 +15,15 @@ contract UnderlyingToken is ERC20 {
 }
 
 contract MyScript is Script {
+    Unitroller unitroller;
+    CErc20Delegator delegator;
     ERC20 underlying_token;
     Comptroller comptroller;
+    Comptroller unitrollerProxy;
     SimplePriceOracle oracle;
     WhitePaperInterestRateModel whitePaperModel;
     CErc20Delegate cERC20_impl;
+
     address admin;
     function setUp() public {
     }   
@@ -35,9 +39,16 @@ contract MyScript is Script {
         cERC20_impl = new CErc20Delegate();
         oracle = new SimplePriceOracle();
 
-        CErc20Delegator delegator = new CErc20Delegator(
+        unitroller = new Unitroller();
+        unitrollerProxy = Comptroller(address(unitroller));
+        unitroller._setPendingImplementation(address(comptroller));
+        comptroller._become(unitroller);
+        comptroller._setPriceOracle(oracle);
+        unitroller._acceptImplementation();
+
+        delegator = new CErc20Delegator(
                 address(underlying_token),
-                comptroller,
+                unitrollerProxy,
                 whitePaperModel,
                 1e18,
                 "Compound Joy Token",
@@ -48,11 +59,6 @@ contract MyScript is Script {
                 new bytes(0)
          );
 
-        Unitroller unitroller = new Unitroller();
-        unitroller._setPendingImplementation(address(comptroller));
-        comptroller._become(unitroller);
-        comptroller._setPriceOracle(oracle);
-        unitroller._acceptImplementation();
         vm.stopBroadcast();
     }
 }
